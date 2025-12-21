@@ -49,7 +49,7 @@ export default function Hero(){
                 {/* Texts */}
                 <div className="absolute inset-0  w-full flex justify-center items-center">
                     <motion.div className='w-xl text-center' variants={parentvariants} animate="show" initial="hidden">
-                         <motion.p className='text-white md:text-4xl' variants={childVariants}>AI-powered perosnal fitness assistant for improve your life</motion.p>
+                         <motion.p className='text-white md:text-4xl' variants={childVariants}>AI-powered personal fitness assistant for improve your life</motion.p>
                          <motion.p className='text-white md:mt-10' variants={childVariants}>Start your fitness journey with confidence - simple,</motion.p>
                          <motion.p className='text-white' variants={childVariants}>perosnalized workouts designed just for you.</motion.p>
                     </motion.div>   

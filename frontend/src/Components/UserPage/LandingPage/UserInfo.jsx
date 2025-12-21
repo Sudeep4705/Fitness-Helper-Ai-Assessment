@@ -49,7 +49,7 @@ const [error, setError] = useState("")
          setError("")
          setPlan("")
          try{
-          const res  =  await axios.post("http://localhost:8002/fitness/add",data)
+          const res  =  await axios.post("https://fitness-helper-ai-assessment.onrender.com/fitness/add",data)
           setPlan(res.data.plan)
           toast.error(res.data.message)
          }

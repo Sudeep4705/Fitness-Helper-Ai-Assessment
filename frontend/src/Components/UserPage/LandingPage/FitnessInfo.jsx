@@ -6,7 +6,7 @@ export default function FitnessInfo(){
             <div className="w-full  md:flex md:w-full md:h-full">
                 <div className="w-full md:w-[30%] md:h-full md:flex md:flex-col md:justify-center md:items-center">
                 <p className="text-center md:pl-8 md:text-left  text-black md:text-5xl md:pl-3">Custom Workouts, Just<span className="text-gray-400"> For You</span></p>
-                <p className="text-center md:pl-8 md:text-left text-black md:text-sm md:pl-3 mt-6">Designed around your unique needs, our smart system generates the ideal workout plan.it's your personal blueprint for achiveing your best results</p>
+                <p className="text-center md:pl-8 md:text-left text-black md:text-sm md:pl-3 mt-6">Designed around your unique needs, our smart system generates the ideal workout plan. It's your personal blueprint for achiveing your best results.</p>
                 </div>
                 <div className=" mt-5 w-full md:w-[70%] md:flex md:justify-center">
                     <img src="Image/fit1.jpg" alt="pic" className="w-full  md:object-cover md:h-full md:w-[90%] md:pl-20"  />

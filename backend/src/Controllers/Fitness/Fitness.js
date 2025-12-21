@@ -17,7 +17,7 @@ module.exports.Fitness = async (req, res) => {
       dietary,
     } = req.body;
     if(!name || !age||!gender||!height||!weight||!goal||!level||!location||!dietary){
-        return res.json({message:"Fill the all Field"})
+        return res.json({message:"Fill all the Fields"})
     }else{
     const userData = new Fitness(
         req.body

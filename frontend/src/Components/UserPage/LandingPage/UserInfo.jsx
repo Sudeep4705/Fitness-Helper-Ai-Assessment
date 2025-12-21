@@ -5,7 +5,7 @@ import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
 export default function UserInfo() {
-  const [data, setData] = useState({
+  const [data, setdata] = useState({
     name: "",
     age: "",
     gender: "",
@@ -22,11 +22,22 @@ export default function UserInfo() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleChange = (e) => {
-    setData({ ...data, [e.target.name]: e.target.value })
+  const handlechange = (e) => {
+    setdata({ ...data, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = async (e) => {
+  const generatePDF = () => {
+    const doc = new jsPDF()
+    doc.setFont("helvetica", "bold")
+    doc.setFontSize(18)
+    doc.text("Your AI Fitness Plan", 10, 20)
+    doc.setFont("helvetica", "normal")
+    doc.setFontSize(12)
+    doc.text(doc.splitTextToSize(plan, 180), 10, 30)
+    doc.save("AI_Fitness_Plan.pdf")
+  }
+
+  const handlesubmit = async (e) => {
     e.preventDefault()
     setSubmitted(true)
 
@@ -34,12 +45,11 @@ export default function UserInfo() {
     setError("")
     setPlan("")
 
-    
+    // ✅ clean height & weight only when sending
     const payload = {
       ...data,
       height: parseInt(data.height),
       weight: parseInt(data.weight),
-      age: parseInt(data.age),
     }
 
     try {
@@ -48,6 +58,7 @@ export default function UserInfo() {
         payload
       )
       setPlan(res.data.plan)
+      toast.error(res.data.message)
     } catch (err) {
       const message =
         err.response?.data?.message ||
@@ -59,143 +70,239 @@ export default function UserInfo() {
     }
   }
 
-  const generatePDF = () => {
-    const doc = new jsPDF()
-    doc.setFontSize(18)
-    doc.text("Your AI Fitness Plan", 10, 20)
-    doc.setFontSize(12)
-    doc.text(doc.splitTextToSize(plan, 180), 10, 30)
-    doc.save("AI_Fitness_Plan.pdf")
-  }
-
-  // helper for red border AFTER submit
-  const errorStyle = (field) =>
+  const borderStyle = (field) =>
     submitted && !data[field] ? "border-red-500" : "border-gray-300"
 
   return (
-    <div className="w-full min-h-screen pt-20 bg-gray-50">
-      <h1 className="text-center text-4xl font-bold mb-10">
-        Your Fitness Details
-      </h1>
+    <>
+      <div className="w-full min-h-screen pt-20 bg-gray-50">
+        {/* Heading */}
+        <h1 className="text-center text-2xl md:text-4xl font-bold text-black mb-10">
+          Your Fitness Details
+        </h1>
 
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Content */}
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-10">
+          {/* Vertical Text */}
+          <div className="hidden lg:flex absolute left-8">
+            <p
+              className="text-black text-4xl tracking-widest mt-60"
+              style={{
+                writingMode: "vertical-rl",
+                transform: "rotate(180deg)",
+              }}
+            >
+              AI FITNESS COACH
+            </p>
+          </div>
 
-          <input
-            name="name"
-            placeholder="Name"
-            value={data.name}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("name")}`}
-          />
+          {/* Video */}
+          <div className="w-full max-w-5xl rounded-2xl overflow-hidden">
+            <video autoPlay muted loop className="w-full h-full object-cover">
+              <source src="Video/fitness.mp4" type="video/mp4" />
+            </video>
+          </div>
 
-          <input
-            type="number"
-            name="age"
-            placeholder="Age"
-            value={data.age}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("age")}`}
-          />
+          {/* Form */}
+          <div className="md:w-3/5 bg-white p-8 rounded-xl shadow-md">
+            <form className="space-y-6">
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={data.name}
+                  onChange={handlechange}
+                  className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                    "name"
+                  )}`}
+                />
+              </div>
 
-          <select
-            name="gender"
-            value={data.gender}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("gender")}`}
-          >
-            <option value="" disabled>Select gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-600 mb-1">Age</label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={data.age}
+                    onChange={handlechange}
+                    className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                      "age"
+                    )}`}
+                  />
+                </div>
 
-          <input
-            name="height"
-            placeholder="Height (170 or 170cm)"
-            value={data.height}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("height")}`}
-          />
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-600 mb-1">Gender</label>
+                  <select
+                    name="gender"
+                    value={data.gender}
+                    onChange={handlechange}
+                    className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                      "gender"
+                    )}`}
+                  >
+                    <option value="">Select gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                  </select>
+                </div>
+              </div>
 
-          <input
-            name="weight"
-            placeholder="Weight (kg)"
-            value={data.weight}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("weight")}`}
-          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-600 mb-1">
+                    Height (cm)
+                  </label>
+                  <input
+                    type="text"
+                    name="height"
+                    value={data.height}
+                    onChange={handlechange}
+                    className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                      "height"
+                    )}`}
+                  />
+                </div>
 
-          <select
-            name="goal"
-            value={data.goal}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("goal")}`}
-          >
-            <option value="" disabled>Select goal</option>
-            <option value="Weight Loss">Weight Loss</option>
-            <option value="Muscle Gain">Muscle Gain</option>
-            <option value="Maintenance">Maintenance</option>
-          </select>
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-600 mb-1">
+                    Weight (kg)
+                  </label>
+                  <input
+                    type="text"
+                    name="weight"
+                    value={data.weight}
+                    onChange={handlechange}
+                    className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                      "weight"
+                    )}`}
+                  />
+                </div>
+              </div>
 
-          <select
-            name="level"
-            value={data.level}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("level")}`}
-          >
-            <option value="" disabled>Select level</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">
+                  Fitness Goal
+                </label>
+                <select
+                  name="goal"
+                  value={data.goal}
+                  onChange={handlechange}
+                  className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                    "goal"
+                  )}`}
+                >
+                  <option value="">Select goal</option>
+                  <option>Weight Loss</option>
+                  <option>Muscle Gain</option>
+                  <option>Maintenance</option>
+                </select>
+              </div>
 
-          <select
-            name="location"
-            value={data.location}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("location")}`}
-          >
-            <option value="" disabled>Select location</option>
-            <option value="Home">Home</option>
-            <option value="Gym">Gym</option>
-            <option value="Outdoor">Outdoor</option>
-          </select>
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">
+                  Fitness Level
+                </label>
+                <select
+                  name="level"
+                  value={data.level}
+                  onChange={handlechange}
+                  className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                    "level"
+                  )}`}
+                >
+                  <option value="">Select level</option>
+                  <option>Beginner</option>
+                  <option>Intermediate</option>
+                  <option>Advanced</option>
+                </select>
+              </div>
 
-          <select
-            name="dietary"
-            value={data.dietary}
-            onChange={handleChange}
-            className={`w-full p-3 border rounded ${errorStyle("dietary")}`}
-          >
-            <option value="" disabled>Select diet</option>
-            <option value="Veg">Veg</option>
-            <option value="Non-Veg">Non-Veg</option>
-            <option value="Vegan">Vegan</option>
-            <option value="Keto">Keto</option>
-          </select>
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">
+                  Workout Location
+                </label>
+                <select
+                  name="location"
+                  value={data.location}
+                  onChange={handlechange}
+                  className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                    "location"
+                  )}`}
+                >
+                  <option value="">Select location</option>
+                  <option>Home</option>
+                  <option>Gym</option>
+                  <option>Outdoor</option>
+                </select>
+              </div>
 
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-3 rounded"
-          >
-            Generate My AI Fitness Plan
-          </button>
-        </form>
-      </div>
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">
+                  Dietary Preference
+                </label>
+                <select
+                  name="dietary"
+                  value={data.dietary}
+                  onChange={handlechange}
+                  className={`p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-black ${borderStyle(
+                    "dietary"
+                  )}`}
+                >
+                  <option value="">Select diet</option>
+                  <option>Veg</option>
+                  <option>Non-Veg</option>
+                  <option>Vegan</option>
+                  <option>Keto</option>
+                </select>
+              </div>
 
-      {loading && <p className="text-center mt-6">Generating plan...</p>}
-
-      {plan && (
-        <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded shadow">
-          <button
-            onClick={generatePDF}
-            className="mb-4 bg-black text-white px-4 py-2 rounded"
-          >
-            Download PDF
-          </button>
-          <pre className="whitespace-pre-wrap">{plan}</pre>
+              <button
+                type="submit"
+                onClick={handlesubmit}
+                className="w-full mt-6 bg-black text-white py-3 rounded-md hover:bg-gray-900 transition"
+              >
+                Generate My AI Fitness Plan
+              </button>
+            </form>
+          </div>
         </div>
-      )}
-    </div>
+
+        {loading && (
+          <p className="text-center text-lg mt-10">
+            Generating your AI fitness plan...
+          </p>
+        )}
+
+        {error && (
+          <p className="text-center text-red-500 mt-10">{error}</p>
+        )}
+
+        {plan && (
+          <div className="max-w-4xl mx-auto mt-16 bg-white p-8 rounded-xl shadow">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Your AI Fitness Plan
+            </h2>
+
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={generatePDF}
+                className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-900 transition"
+              >
+                Download PDF
+              </button>
+            </div>
+
+            <div className="max-h-[500px] overflow-y-auto border rounded-lg p-4">
+              <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                {plan}
+              </pre>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   )
 }

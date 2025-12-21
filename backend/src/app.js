@@ -23,7 +23,10 @@ Db()
 //middlewares
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-app.use(Cors({origin:"http://localhost:5173",credentials:true}))
+app.use(Cors({origin:[
+      "http://localhost:5173",
+      "https://fit-ness-helper.netlify.app"
+    ],credentials:true}))
 
 // routes
 app.use("/fitness",fitnessRoute)

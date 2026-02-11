@@ -6,6 +6,10 @@ const Cors = require("cors")
 const Url = process.env.MONGO_URL
 const fitnessRoute = require("../src/Routes/Fitness/fitness")
 
+// dns error fix
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 // mongoose connection
 async function Db() {
     await mongoose.connect(Url)

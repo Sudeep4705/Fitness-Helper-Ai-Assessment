@@ -5,6 +5,7 @@ const groq = new Groq({
 });
 
 module.exports.Fitness = async (req, res) => {
+  try {
     const {
       name,
       age,
@@ -16,17 +17,18 @@ module.exports.Fitness = async (req, res) => {
       location,
       dietary,
     } = req.body;
-    console.log(req.body);
-    
-    if(!name || !age||!gender||!height||!weight||!goal||!level||!location||!dietary){
-        return res.json({message:"Fill all the Fields"})
-    }else{
-    const userData = new Fitness(
-        req.body
-    )
-    await userData.save()
+
+    if (
+      !name || !age || !gender || !height || !weight ||
+      !goal || !level || !location || !dietary
+    ) {
+      return res.status(400).json({ message: "Fill all the fields" });
     }
-const prompt = `
+
+    const userData = new Fitness(req.body);
+    await userData.save();
+
+    const prompt = `
 You are a professional fitness trainer and nutritionist.
 
 User Profile:
@@ -55,8 +57,17 @@ Use headings and bullet points.
       temperature: 0.7,
     });
 
-    res.json({
+    res.status(200).json({
       success: true,
       plan: completion.choices[0].message.content,
     });
+
+  } catch (error) {
+    console.error("SERVER ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong on server",
+      error: error.message,
+    });
   }
+};

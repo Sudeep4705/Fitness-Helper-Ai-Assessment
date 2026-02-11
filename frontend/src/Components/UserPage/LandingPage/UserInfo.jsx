@@ -60,14 +60,19 @@ export default function UserInfo() {
       setPlan(res.data.plan)
       toast.error(res.data.message)
     } catch (err) {
-      const message =
-        err.response?.data?.message ||
-        "Failed to generate plan. Try again."
-      toast.error(message)
-      setError(message)
-    } finally {
-      setLoading(false)
-    }
+  console.log("FULL ERROR:", err);
+  console.log("RESPONSE:", err.response);
+  console.log("DATA:", err.response?.data);
+
+  const message =
+    err.response?.data?.message ||
+    err.message ||
+    "Failed to generate plan. Try again.";
+
+  toast.error(message);
+  setError(message);
+}
+
   }
 
   const borderStyle = (field) =>
